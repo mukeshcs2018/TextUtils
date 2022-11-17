@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 
+
 export default function TextForm(props) {
 
     const handleOnChange = (event) => {
@@ -22,6 +23,45 @@ export default function TextForm(props) {
 
     }
 
+    const handleClearClick = () =>{
+        setText("")
+    } 
+    
+    const handleRemoveSpaces = () =>{
+        let words = text.split(' ');
+        let joinedWords = '';
+        // console.log(words);
+        words.forEach((elem)=>{
+            if(elem[0] !== undefined){
+                joinedWords += elem + " ";
+                // console.log(joinedWords);
+            }
+        })
+        setText(joinedWords);
+    }
+
+    const handleSpeakClick = () =>{
+        let msg = new SpeechSynthesisUtterance();
+        var voices;
+        var timer = setInterval(function() {
+            voices = speechSynthesis.getVoices();
+            console.log(voices);
+            if (voices.length !== 0) {
+                msg = new SpeechSynthesisUtterance();
+                msg.text = text;
+                msg.voice = voices[12];
+                window.speechSynthesis.speak(msg);
+                msg.lang = 'en-US';
+                clearInterval(timer);
+            }
+        }, 200);
+        timer();
+        speechSynthesis.speak("hello world");
+
+
+      }
+
+
     const countWords = (str) => {
         return str.trim().split(/\s+/).length;
       }
@@ -31,11 +71,14 @@ export default function TextForm(props) {
     return (
         <>
         <div className='container'>
-            <h1>{props.heading}</h1>
+            <h1><b>{props.heading}</b></h1>
             <div className="mb-3">
                 <textarea className="form-control" id="textBox" rows="10" value={text} onChange={handleOnChange}></textarea>
                 <button type="button" className="btn btn-primary my-2" onClick={handleUpClick}>Convert to UpperCase</button>
                 <button type="button" className="btn btn-primary mx-2" onClick={handleLowClick}>Convert to LowerCase</button>
+                <button type="button" className="btn btn-primary mx-2" onClick={handleRemoveSpaces}>Remove Extra Spaces</button>
+                <button type="button" className="btn btn-primary" onClick={handleClearClick}>Clear Text</button>
+                <button type="submit" className="btn btn-warning mx-2 my-2" onClick={handleSpeakClick}>Speak</button>
                 
             </div>
 
@@ -46,6 +89,7 @@ export default function TextForm(props) {
             <p>Takes around {0.008 * text.split(" ").length} minutes to read.</p>
             <h3>Preview</h3>
             <p>{text}</p>
+
 
         </div>
         </>
